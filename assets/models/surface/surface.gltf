@@ -17,25 +17,23 @@
 			"mesh":0,
 			"name":"Plane",
 			"scale":[
-				30,
-				10,
-				30
-			],
-			"translation":[
-				0,
-				1.3406333923339844,
-				0
+				60,
+				60,
+				60
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.002",
+			"name":"Material.003",
 			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":0
-				},
+				"baseColorFactor":[
+					0.06522221863269806,
+					0.2888857424259186,
+					0.04009194299578667,
+					1
+				],
 				"metallicFactor":0,
 				"roughnessFactor":0.5
 			}
@@ -43,7 +41,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Plane.001",
+			"name":"Plane",
 			"primitives":[
 				{
 					"attributes":{
@@ -57,32 +55,19 @@
 			]
 		}
 	],
-	"textures":[
-		{
-			"sampler":0,
-			"source":0
-		}
-	],
-	"images":[
-		{
-			"mimeType":"image/png",
-			"name":"Rugged Terrain with Rocky Peaks Diffuse EXR",
-			"uri":"Rugged%20Terrain%20with%20Rocky%20Peaks%20Diffuse%20EXR.png"
-		}
-	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":16420,
+			"count":16641,
 			"max":[
 				1,
-				-0.1644517183303833,
+				0.16404832899570465,
 				1
 			],
 			"min":[
 				-1,
-				-0.5991333723068237,
+				-0.02670162357389927,
 				-1
 			],
 			"type":"VEC3"
@@ -90,57 +75,51 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":16420,
+			"count":16641,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":16420,
+			"count":16641,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":24576,
+			"count":98304,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":197040,
+			"byteLength":199692,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":197040,
-			"byteOffset":197040,
+			"byteLength":199692,
+			"byteOffset":199692,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":131360,
-			"byteOffset":394080,
+			"byteLength":133128,
+			"byteOffset":399384,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":49152,
-			"byteOffset":525440,
+			"byteLength":196608,
+			"byteOffset":532512,
 			"target":34963
-		}
-	],
-	"samplers":[
-		{
-			"magFilter":9729,
-			"minFilter":9987
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":574592,
+			"byteLength":729120,
 			"uri":"surface.bin"
 		}
 	]

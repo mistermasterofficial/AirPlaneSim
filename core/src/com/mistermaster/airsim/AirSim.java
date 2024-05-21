@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 public class AirSim extends ApplicationAdapter {
+	private float[] background_color = {102f/255f, 150f/255f, 252f/255f};
 	private BitmapFont font;
 	private SpriteBatch batch;
 
@@ -33,34 +35,67 @@ public class AirSim extends ApplicationAdapter {
 
 	private MyObject surfaceObject;
 	private List<MyObject> coins = new ArrayList<>();
+	private List<TurbulenceObject> turbulences = new ArrayList<>();
 	private AirPlaneObject airPlaneObject;
+
+	private float width;
+	private float height;
+	private float depth;
+
+	private float border_width;
+
+	private int max_coin_count = 100;
+	private int max_turbulence_count = 100;
 
 	Root root;
 
 	public void centerAlignTextDraw(BitmapFont font, Batch batch, String string, float x, float y){
 		GlyphLayout layout = new GlyphLayout(font, string);
-		font.draw(batch,string,x- layout.width/2,y-layout.height/2);
+		font.draw(batch,string,x- layout.width/2,y+ layout.height/2);
+	}
+	public void topAlignTextDraw(BitmapFont font, Batch batch, String string, float x, float y){
+		GlyphLayout layout = new GlyphLayout(font, string);
+		font.draw(batch,string,x- layout.width/2,y+ layout.height);
+	}
+	public void bottomAlignTextDraw(BitmapFont font, Batch batch, String string, float x, float y){
+		GlyphLayout layout = new GlyphLayout(font, string);
+		font.draw(batch,string,x- layout.width/2,y);
 	}
 
 	public void generateCoin(){
-		MyObject coin = new MyObject(new GLTFLoader().load(Gdx.files.internal("models/coin/scene.gltf")).scene);
+		MyObject coin = new MyObject(new GLTFLoader().load(Gdx.files.internal("models/coin/coin.gltf")).scene);
 		Random random = new Random();
-		coin.setPosition(new Vector3((random.nextFloat()*2-1)*10,(random.nextFloat())*10+10,(random.nextFloat()*2-1)*10));
+		coin.setPosition(new Vector3((random.nextFloat()*2-1)*(width/2-border_width),(random.nextFloat())*(height-border_width*2)+border_width,(random.nextFloat()*2-1)*(depth/2-border_width)));
 		coins.add(coin);
 		sceneManager.addScene(coin);
+	}
+	public void generateTurbulence(){
+		Random random = new Random();
+		TurbulenceObject turbulenceObject = new TurbulenceObject(new Vector3((random.nextFloat()*2-1)*(width/2),
+				(random.nextFloat())*height,
+				(random.nextFloat()*2-1)*(depth/2)),
+				random.nextFloat()*(width/2), random.nextFloat()*100);
+		turbulences.add(turbulenceObject);
 	}
 
 
 	public void restartGame(){
-		coins.clear();
-		for (int i = 0; i < 10-coins.size(); i++) {
+		for (int i = 0; i < coins.size(); i++) {
+			sceneManager.removeScene(coins.get(0));
+			coins.remove(coins.get(0));
+		}
+		for (int i = 0; i < max_coin_count-coins.size(); i++) {
 			generateCoin();
 		}
+		turbulences.clear();
+		for (int i = 0; i < max_turbulence_count-turbulences.size(); i++) {
+			generateTurbulence();
+		}
 		root.setScore(0);
+		airPlaneObject.reset();
 		airPlaneObject.getCamera().position.set(new Vector3(0f,10f,0f));
 		airPlaneObject.getCamera().update();
 	}
-
 
 	@Override
 	public void create() {
@@ -77,11 +112,6 @@ public class AirSim extends ApplicationAdapter {
 		surfaceObject.setPosition(new Vector3(0,surfaceObject.bounds.getCenterY()-surfaceObject.bounds.getMax(new Vector3()).y,0));
 		sceneManager.addScene(surfaceObject);
 
-//		sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/airplane/airplane.gltf"));
-//		scene = new Scene(sceneAsset.scene);
-//		scene.modelInstance.transform.setTranslation(new Vector3(5f,5f,5f));
-//		sceneManager.addScene(scene);
-
 		Camera cam = new PerspectiveCamera(90, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		cam.near = 0.001f;
@@ -95,8 +125,13 @@ public class AirSim extends ApplicationAdapter {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		sceneManager.environment = new Environment();
-//		sceneManager.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		sceneManager.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
 		sceneManager.environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
+		width = surfaceObject.bounds.getWidth();
+		height = 30f;
+		depth = surfaceObject.bounds.getDepth();
+		border_width = 5f;
 
 		restartGame();
 	}
@@ -113,6 +148,7 @@ public class AirSim extends ApplicationAdapter {
 	private void draw(float deltaTime){
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		Gdx.gl.glClearColor(background_color[0],background_color[1],background_color[2], 1);
 
 		sceneManager.update(deltaTime);
 		sceneManager.render();
@@ -134,21 +170,41 @@ public class AirSim extends ApplicationAdapter {
 			if(GamepadControl.EventButtonMap.get("CROSS")){
 				centerAlignTextDraw(font,
 						batch,
-						"Position: \n"+airPlaneObject.getCamera().position.x+
-								"\n"+airPlaneObject.getCamera().position.y+
-								"\n"+airPlaneObject.getCamera().position.z,
-						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight());
-			}
-			if(GamepadControl.EventButtonMap.get("TRIANGLE")){
-				centerAlignTextDraw(font,
-						batch,
 						airPlaneObject.getInfo(),
-						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight());
+						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight()/2);
 			}
 			if(GamepadControl.EventButtonMap.get("SQUARE")){
 				centerAlignTextDraw(font,
 						batch,
 						"Score: "+root.getScore(),
+						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight()/2);
+			}
+
+			for (TurbulenceObject turbulence : turbulences) {
+				if (turbulence.isCollideWith(airPlaneObject.getCamera().position)){
+					topAlignTextDraw(font,
+							batch,
+							"Warning: Turbulence!",
+							(float) Gdx.graphics.getWidth() /2, 0);
+					break;
+				}
+			}
+
+			if((Math.abs(airPlaneObject.getCamera().position.x) > surfaceObject.bounds.getMax(new Vector3()).x-border_width ||
+					Math.abs(airPlaneObject.getCamera().position.z) > surfaceObject.bounds.getMax(new Vector3()).z-border_width)){
+				bottomAlignTextDraw(font,
+						batch,
+						"Warning: Border!",
+						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight());
+			} else if (airPlaneObject.getCamera().position.y <= border_width) {
+				bottomAlignTextDraw(font,
+						batch,
+						"Warning: Low height!",
+						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight());
+			} else if (airPlaneObject.getCamera().position.y > height-border_width) {
+				bottomAlignTextDraw(font,
+						batch,
+						"Warning: High height!",
 						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight());
 			}
 		}
@@ -162,16 +218,21 @@ public class AirSim extends ApplicationAdapter {
 					root.setScore(root.getScore() + 1);
 					coins.remove(coin);
 					sceneManager.removeScene(coin);
-					Log("COIN!");
+					generateCoin();
 					break;
 				}
 			}
 
+			for (TurbulenceObject turbulence : turbulences) {
+				if (turbulence.isCollideWith(airPlaneObject.getCamera().position)){
+					airPlaneObject.getCamera().position.set(turbulence.doTurbulence(airPlaneObject.getCamera().position,deltaTime));
+				}
+			}
+
 			if ((surfaceObject.isCollideWith(airPlaneObject.getCamera().position))||
-				(airPlaneObject.getCamera().position.x > surfaceObject.bounds.getMax(new Vector3()).x ||
-				airPlaneObject.getCamera().position.z > surfaceObject.bounds.getMax(new Vector3()).z ||
-				airPlaneObject.getCamera().position.z < surfaceObject.bounds.getMin(new Vector3()).z ||
-				airPlaneObject.getCamera().position.x < surfaceObject.bounds.getMin(new Vector3()).x)) {
+				(Math.abs(airPlaneObject.getCamera().position.x) > surfaceObject.bounds.getMax(new Vector3()).x ||
+				Math.abs(airPlaneObject.getCamera().position.z) > surfaceObject.bounds.getMax(new Vector3()).z)||
+			airPlaneObject.getCamera().position.y > height || airPlaneObject.getCamera().position.y <= 0) {
 				root.setGameOver(true);
 			}
 
@@ -185,8 +246,6 @@ public class AirSim extends ApplicationAdapter {
 			restartGame();
 			root.setRestartGame(true);
 		}
-
-//		Log(airPlaneObject.getCamera().position+"");
 	}
 
 	@Override
