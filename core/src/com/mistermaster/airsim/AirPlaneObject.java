@@ -14,7 +14,6 @@ public class AirPlaneObject {
     }
 
     private Camera cam;
-    private Camera origin_cam;
 
     private float rotation_speed = 0f;
     private float moving_speed = 1f;
@@ -26,7 +25,6 @@ public class AirPlaneObject {
 
     public AirPlaneObject(Camera cam) {
         this.cam=cam;
-        this.origin_cam=cam;
     }
 
     public void update(float deltaTime){
