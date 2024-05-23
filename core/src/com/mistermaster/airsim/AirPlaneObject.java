@@ -69,7 +69,7 @@ public class AirPlaneObject {
 
             if(Math.abs(GamepadControl.EventAxisMap.get("LEFT_AXIS_Y")-GamepadControl.EventAxisMap.get("RIGHT_AXIS_Y"))<=0.1f){
                 float value = GamepadControl.EventAxisMap.get("LEFT_AXIS_Y");
-                up_rotation_speed += value;
+                up_rotation_speed += -value;
             }
 
             if(Math.abs(GamepadControl.EventAxisMap.get("L2_AXIS")-GamepadControl.EventAxisMap.get("R2_AXIS"))<=0.1f){
