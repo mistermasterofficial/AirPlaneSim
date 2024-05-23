@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.Random;
 
-import sun.font.DelegatingShape;
-
 public class TurbulenceObject {
     Vector3 position;
     float radius;

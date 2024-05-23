@@ -16,12 +16,13 @@ public class MyObject extends Scene {
     public void setPosition(Vector3 position) {
         modelInstance.transform.translate(position);
         this.position = position;
-        bounds.set(bounds.getMin(new Vector3()).sub(bounds.getCenter(new Vector3())).add(position),bounds.getMax(new Vector3()).sub(bounds.getCenter(new Vector3())).add(position));
+        bounds.set(bounds.getMin(new Vector3())
+                .sub(bounds.getCenter(new Vector3()))
+                .add(position),bounds.getMax(new Vector3())
+                .sub(bounds.getCenter(new Vector3())).add(position));
     }
 
     private Vector3 position;
-
-
 
     public MyObject(SceneModel scene) {
         super(scene);
