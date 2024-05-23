@@ -31,32 +31,6 @@ public class AirPlaneObject {
 
     public void update(float deltaTime){
         if(!(Root.getInstance().isGameOver() || Root.getInstance().isRestartGame())) {
-//            for (String key : GamepadControl.EventButtonMap.keySet()) {
-//                if (GamepadControl.EventButtonMap.get(key)) {
-//                    switch (key) {
-//                        case "UP":
-//                            cam.position.add(new Vector3(cam.direction).scl(deltaTime));
-//                            break;
-//                        case "DOWN":
-//                            cam.position.sub(new Vector3(cam.direction).scl(deltaTime));
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            for (String axis : GamepadControl.EventAxisMap.keySet()) {
-//                float value = GamepadControl.EventAxisMap.get(axis);
-//                if (value != 0f) {
-//                    switch (axis) {
-//                        case "LEFT_AXIS_Y":
-//                            cam.rotate(new Vector3(cam.direction).rotate(cam.up, 90f), value * 180f * deltaTime);
-//                            break;
-//                        case "LEFT_AXIS_X":
-//                            cam.rotate(Vector3.Y, -value * 180f * deltaTime);
-//                            break;
-//                    }
-//                }
-//            }
             if(GamepadControl.EventButtonMap.get("CIRCLE")){
                 rotation_speed = 0;
                 up_rotation_speed = 0;
@@ -83,13 +57,6 @@ public class AirPlaneObject {
     }
 
     private void gravity(float deltaTime){
-//        cam.position.add(new Vector3(0,-gravity_speed*deltaTime*(float) Math.abs(Math.sin(current_up_rotation_angle)),0));
-//        cam.position.add(new Vector3(0,-gravity_speed*deltaTime*(float) Math.abs(Math.sin(current_rotation_angle)),0));
-//        cam.rotate(cam.up, (float) Math.sin(Math.toRadians(current_rotation_angle)) * deltaTime * gravity_rotation_speed);
-//        current_rotation_angle += (float) Math.sin(Math.toRadians(current_rotation_angle)) * deltaTime * gravity_rotation_speed;
-//
-//        cam.rotate(new Vector3(cam.direction).rotate(cam.up, 90f), (float) Math.sin(Math.toRadians(current_up_rotation_angle)) * deltaTime * gravity_rotation_speed);
-//        current_up_rotation_angle += (float) Math.sin(Math.toRadians(current_up_rotation_angle)) * deltaTime * gravity_rotation_speed;
         Vector3 direction = new Vector3(cam.direction).sub(new Vector3(0,cam.direction.y,0)).nor();
         Vector3 wing = new Vector3(cam.direction).rotate(cam.up, 90f);
         float scalar = (Math.abs(direction.dot(cam.direction))+Math.abs(wing.dot(Vector3.Y)))/2;
@@ -101,10 +68,8 @@ public class AirPlaneObject {
     private void flight(float deltaTime){
         cam.rotate(new Vector3(cam.direction), rotation_speed * deltaTime);
         cam.rotate(cam.up, -rotation_speed * deltaTime);
-//        current_rotation_angle+=rotation_speed*deltaTime;
 
         cam.rotate(new Vector3(cam.direction).rotate(cam.up, 90f),up_rotation_speed*deltaTime);
-//        current_up_rotation_angle+=up_rotation_speed*deltaTime;
 
         cam.position.add(new Vector3(cam.direction).scl(moving_speed * deltaTime));
     }
