@@ -1,5 +1,6 @@
 package com.mistermaster.airsim;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -44,8 +45,9 @@ public class AirPlaneObject {
                 up_rotation_speed += -value;
             }
 
-            if(Math.abs(GamepadControl.EventAxisMap.get("L2_AXIS")-GamepadControl.EventAxisMap.get("R2_AXIS"))<=0.1f){
-                moving_speed += acceleration * deltaTime * GamepadControl.EventAxisMap.get("L2_AXIS");
+            if(GamepadControl.EventButtonMap.get("L2")&&GamepadControl.EventButtonMap.get("R2")){
+                moving_speed += acceleration * deltaTime;
+                Gdx.app.log("KEY", "AAAAAAAAA is pressed");
             }
             flight(deltaTime);
             gravity(deltaTime);
@@ -74,11 +76,11 @@ public class AirPlaneObject {
 
     public String getInfo(){
         String res = "Speed: "+moving_speed+"\n"+
-                "Horizontal rotation speed: "+rotation_speed+"\n"+
-                "Vertical rotation speed: "+up_rotation_speed+"\n"+
-                "Position: \n"+cam.position.x+
-                "\n"+cam.position.y+
-                "\n"+cam.position.z;
+                "Horizontal rotation speed: "+String.format("%.1f", rotation_speed)+"\n"+
+                "Vertical rotation speed: "+String.format("%.1f", up_rotation_speed)+"\n"+
+                "Position: \n"+String.format("%.1f", cam.position.x)+
+                "\n"+String.format("%.1f", cam.position.y)+
+                "\n"+String.format("%.1f", cam.position.z);
         return res;
     }
 

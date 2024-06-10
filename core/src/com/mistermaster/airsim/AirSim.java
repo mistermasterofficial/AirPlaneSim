@@ -32,8 +32,11 @@ public class AirSim extends ApplicationAdapter {
 
 	private SceneAsset sceneAsset;
 	private SceneManager sceneManager;
+	
+	private MyObject[] surfaces = new MyObject[3];
 
-	private MyObject surfaceObject;
+	private int current_surface;
+
 	private List<MyObject> coins = new ArrayList<>();
 	private List<TurbulenceObject> turbulences = new ArrayList<>();
 	private AirPlaneObject airPlaneObject;
@@ -44,7 +47,7 @@ public class AirSim extends ApplicationAdapter {
 
 	private float border_width;
 
-	private int max_coin_count = 100;
+	private int max_coin_count = 200;
 	private int max_turbulence_count = 100;
 
 	Root root;
@@ -74,12 +77,13 @@ public class AirSim extends ApplicationAdapter {
 		TurbulenceObject turbulenceObject = new TurbulenceObject(new Vector3((random.nextFloat()*2-1)*(width/2),
 				(random.nextFloat())*height,
 				(random.nextFloat()*2-1)*(depth/2)),
-				random.nextFloat()*(width/2), random.nextFloat()*100);
+				random.nextFloat()*(width/20), random.nextFloat()*100+20);
 		turbulences.add(turbulenceObject);
 	}
 
 
 	public void restartGame(){
+		generateSurface();
 		for (int i = 0; i < coins.size(); i++) {
 			sceneManager.removeScene(coins.get(0));
 			coins.remove(coins.get(0));
@@ -97,6 +101,12 @@ public class AirSim extends ApplicationAdapter {
 		airPlaneObject.getCamera().update();
 	}
 
+	public void generateSurface(){
+		sceneManager.removeScene(surfaces[current_surface]);
+		current_surface = new Random().nextInt(3);
+		sceneManager.addScene(surfaces[current_surface]);
+	}
+
 	@Override
 	public void create() {
 		Bullet.init();
@@ -107,15 +117,21 @@ public class AirSim extends ApplicationAdapter {
 
 		sceneManager = new SceneManager();
 
-		sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/surface/surface.gltf"));
-		surfaceObject = new MyObject(sceneAsset.scene);
-		surfaceObject.setPosition(new Vector3(0,surfaceObject.bounds.getCenterY()-surfaceObject.bounds.getMax(new Vector3()).y,0));
-		sceneManager.addScene(surfaceObject);
+		surfaces[0] = new MyObject(new GLTFLoader().load(Gdx.files.internal("models/surface/surface.gltf")).scene);
+		surfaces[1] = new MyObject(new GLTFLoader().load(Gdx.files.internal("models/surface1/surface.gltf")).scene);
+		surfaces[2] = new MyObject(new GLTFLoader().load(Gdx.files.internal("models/surface2/surface.gltf")).scene);
+
+		surfaces[0].setPosition(new Vector3(0,surfaces[0].bounds.getCenterY()-surfaces[0].bounds.getMax(new Vector3()).y,0));
+		surfaces[1].setPosition(new Vector3(0,surfaces[1].bounds.getCenterY()-surfaces[1].bounds.getMax(new Vector3()).y,0));
+		surfaces[2].setPosition(new Vector3(0,surfaces[2].bounds.getCenterY()-surfaces[2].bounds.getMax(new Vector3()).y,0));
+
+		current_surface = 0;
+		sceneManager.addScene(surfaces[current_surface]);
 
 		Camera cam = new PerspectiveCamera(90, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-		cam.near = 0.001f;
-		cam.far = 300f;
+		cam.near = 0.01f;
+		cam.far = 30f;
 		airPlaneObject = new AirPlaneObject(cam);
 
 		sceneManager.setCamera(airPlaneObject.getCamera());
@@ -128,9 +144,9 @@ public class AirSim extends ApplicationAdapter {
 		sceneManager.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
 		sceneManager.environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
-		width = surfaceObject.bounds.getWidth();
+		width = surfaces[current_surface].bounds.getWidth();
 		height = 30f;
-		depth = surfaceObject.bounds.getDepth();
+		depth = surfaces[current_surface].bounds.getDepth();
 		border_width = 5f;
 
 		restartGame();
@@ -190,8 +206,8 @@ public class AirSim extends ApplicationAdapter {
 				}
 			}
 
-			if((Math.abs(airPlaneObject.getCamera().position.x) > surfaceObject.bounds.getMax(new Vector3()).x-border_width ||
-					Math.abs(airPlaneObject.getCamera().position.z) > surfaceObject.bounds.getMax(new Vector3()).z-border_width)){
+			if((Math.abs(airPlaneObject.getCamera().position.x) > surfaces[current_surface].bounds.getMax(new Vector3()).x-border_width ||
+					Math.abs(airPlaneObject.getCamera().position.z) > surfaces[current_surface].bounds.getMax(new Vector3()).z-border_width)){
 				bottomAlignTextDraw(font,
 						batch,
 						"Warning: Border!",
@@ -229,9 +245,9 @@ public class AirSim extends ApplicationAdapter {
 				}
 			}
 
-			if ((surfaceObject.isCollideWith(airPlaneObject.getCamera().position))||
-				(Math.abs(airPlaneObject.getCamera().position.x) > surfaceObject.bounds.getMax(new Vector3()).x ||
-				Math.abs(airPlaneObject.getCamera().position.z) > surfaceObject.bounds.getMax(new Vector3()).z)||
+			if ((surfaces[current_surface].isCollideWith(airPlaneObject.getCamera().position))||
+				(Math.abs(airPlaneObject.getCamera().position.x) > surfaces[current_surface].bounds.getMax(new Vector3()).x ||
+				Math.abs(airPlaneObject.getCamera().position.z) > surfaces[current_surface].bounds.getMax(new Vector3()).z)||
 			airPlaneObject.getCamera().position.y > height || airPlaneObject.getCamera().position.y <= 0) {
 				root.setGameOver(true);
 			}
