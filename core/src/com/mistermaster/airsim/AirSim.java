@@ -189,6 +189,12 @@ public class AirSim extends ApplicationAdapter {
 						airPlaneObject.getInfo(),
 						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight()/2);
 			}
+			if(GamepadControl.EventButtonMap.get("OPTIONS")){
+				centerAlignTextDraw(font,
+						batch,
+						"FPS: "+Integer.toString((int)(1/deltaTime)),
+						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight()/2);
+			}
 			if(GamepadControl.EventButtonMap.get("SQUARE")){
 				centerAlignTextDraw(font,
 						batch,
