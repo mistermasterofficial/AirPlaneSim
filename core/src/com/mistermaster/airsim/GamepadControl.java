@@ -3,6 +3,7 @@ package com.mistermaster.airsim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.controllers.Controllers;
 
 import java.util.HashMap;
@@ -25,15 +26,16 @@ public class GamepadControl implements ControllerListener {
     private static boolean isPressed = false;
 
     static {
+        ControllerMapping temp_map = Controllers.getCurrent().getMapping();
 //        Map.put(98,"CIRCLE");
 //        Map.put(99,"TRIANGLE");
 //        Map.put(96,"SQUARE");
 //        Map.put(97,"CROSS");
 //
-//        Map.put(0,"LEFT_AXIS_X");
-//        Map.put(1,"LEFT_AXIS_Y");
-//        Map.put(2,"RIGHT_AXIS_X");
-//        Map.put(5,"RIGHT_AXIS_Y");
+        Map.put(temp_map.axisLeftX,"LEFT_AXIS_X");
+        Map.put(temp_map.axisLeftY,"LEFT_AXIS_Y");
+        Map.put(temp_map.axisRightX,"RIGHT_AXIS_X");
+        Map.put(temp_map.axisRightY,"RIGHT_AXIS_Y");
 //
 //        Map.put(100,"L1");
 //        Map.put(101,"R1");
@@ -46,32 +48,32 @@ public class GamepadControl implements ControllerListener {
 
 
 
-        Map.put(19,"UP");
-        Map.put(21,"LEFT");
-        Map.put(22,"RIGHT");
-        Map.put(20,"DOWN");
+        Map.put(temp_map.buttonDpadUp,"UP");
+        Map.put(temp_map.buttonDpadLeft,"LEFT");
+        Map.put(temp_map.buttonDpadRight,"RIGHT");
+        Map.put(temp_map.buttonDpadDown,"DOWN");
 
-        Map.put(100,"TRIANGLE");
-        Map.put(99,"SQUARE");
-        Map.put(97,"CIRCLE");
-        Map.put(96,"CROSS");
+        Map.put(temp_map.buttonY,"TRIANGLE");
+        Map.put(temp_map.buttonX,"SQUARE");
+        Map.put(temp_map.buttonB,"CIRCLE");
+        Map.put(temp_map.buttonA,"CROSS");
 
         Map.put(109,"SHARE");
-        Map.put(110,"START");
+        Map.put(temp_map.buttonStart,"START");
         Map.put(108,"OPTIONS");
 
-        Map.put(7,"LEFT_AXIS_X");
-        Map.put(6,"LEFT_AXIS_Y");
-        Map.put(3,"RIGHT_AXIS_X");
-        Map.put(2,"RIGHT_AXIS_Y");
+//        Map.put(7,"LEFT_AXIS_X");
+//        Map.put(6,"LEFT_AXIS_Y");
+//        Map.put(3,"RIGHT_AXIS_X");
+//        Map.put(2,"RIGHT_AXIS_Y");
 
-        Map.put(106,"LEFT_AXIS_BUTTON");
-        Map.put(107,"RIGHT_AXIS_BUTTON");
+        Map.put(temp_map.buttonLeftStick,"LEFT_AXIS_BUTTON");
+        Map.put(temp_map.buttonRightStick,"RIGHT_AXIS_BUTTON");
 
-        Map.put(102,"L1");
-        Map.put(103,"R1");
-        Map.put(104,"L2");
-        Map.put(105,"R2");
+        Map.put(temp_map.buttonL1,"L1");
+        Map.put(temp_map.buttonR1,"R1");
+        Map.put(temp_map.buttonL2,"L2");
+        Map.put(temp_map.buttonR2,"R2");
 
         Map.put(4,"L2_AXIS");
         Map.put(5,"L2_AXIS");
@@ -133,7 +135,6 @@ public class GamepadControl implements ControllerListener {
         Gdx.app.log("KEY", buttonCode+" is pressed");
         EventButtonMap.put(Map.get(buttonCode),true);
         isPressed = true;
-        debug_btn = buttonCode;
         return false;
     }
 
@@ -142,7 +143,6 @@ public class GamepadControl implements ControllerListener {
         Gdx.app.log("KEY", buttonCode+" is NOT pressed");
         EventButtonMap.put(Map.get(buttonCode),false);
         isPressed = false;
-        debug_btn = -1;
         return false;
     }
 
@@ -150,6 +150,7 @@ public class GamepadControl implements ControllerListener {
     public boolean axisMoved(Controller controller, int axisCode, float value) {
         Gdx.app.log("KEY", axisCode+" is moved");
         if(value!=0.003921628f) {
+            debug_btn = axisCode;
             EventAxisMap.put(Map.get(axisCode), value);
         }else{
             EventAxisMap.put(Map.get(axisCode), 0f);

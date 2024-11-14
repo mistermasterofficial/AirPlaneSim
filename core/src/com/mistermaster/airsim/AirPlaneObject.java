@@ -35,12 +35,12 @@ public class AirPlaneObject {
                 up_rotation_speed = 0;
             }
 
-            if(Math.abs(GamepadControl.EventAxisMap.get("LEFT_AXIS_X")-GamepadControl.EventAxisMap.get("RIGHT_AXIS_X"))<=0.1f){
+            if(GamepadControl.EventAxisMap.get("LEFT_AXIS_X")!=0f){
                 float value = GamepadControl.EventAxisMap.get("LEFT_AXIS_X");
                 rotation_speed += value;
             }
 
-            if(Math.abs(GamepadControl.EventAxisMap.get("LEFT_AXIS_Y")-GamepadControl.EventAxisMap.get("RIGHT_AXIS_Y"))<=0.1f){
+            if(GamepadControl.EventAxisMap.get("LEFT_AXIS_Y")!=0f){
                 float value = GamepadControl.EventAxisMap.get("LEFT_AXIS_Y");
                 up_rotation_speed += -value;
             }

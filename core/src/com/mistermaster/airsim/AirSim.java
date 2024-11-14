@@ -128,10 +128,10 @@ public class AirSim extends ApplicationAdapter {
 		current_surface = 0;
 		sceneManager.addScene(surfaces[current_surface]);
 
-		Camera cam = new PerspectiveCamera(90, Gdx.graphics.getWidth(),
+		Camera cam = new PerspectiveCamera(120, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-		cam.near = 0.01f;
-		cam.far = 30f;
+		cam.near = 0.1f;
+		cam.far = 15f;
 		airPlaneObject = new AirPlaneObject(cam);
 
 		sceneManager.setCamera(airPlaneObject.getCamera());
@@ -192,7 +192,7 @@ public class AirSim extends ApplicationAdapter {
 			if(GamepadControl.EventButtonMap.get("OPTIONS")){
 				centerAlignTextDraw(font,
 						batch,
-						"FPS: "+Integer.toString((int)(1/deltaTime)),
+						"FPS: "+Integer.toString((int)(1/deltaTime))+"\n"+"AXIS: "+GamepadControl.debug_btn,
 						(float) Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight()/2);
 			}
 			if(GamepadControl.EventButtonMap.get("SQUARE")){
